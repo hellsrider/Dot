@@ -4,7 +4,7 @@ using System.Collections;
 public class Control : MonoBehaviour {
 	Rigidbody rb;
 	public float speed = 0.2f;
-	public float jumpspeed = 300.0f;
+	public float jumpspeed = 100.0f;
 	private bool canJump = true;
 	Vector3 p0;
 	Quaternion r0;
@@ -12,13 +12,14 @@ public class Control : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
+		rb.freezeRotation = true;
 		p0 = transform.position;
-		r0 = transform.rotation;
+		//r0 = transform.rotation;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//rb.AddForce(Vector3.right * Input.GetAxis("Horizontal") * 10.0f);
+		//rb.AddForce(Vector3.right * Input.GetAxis("Horizontal") * 5.0f);
 		transform.localPosition += (Input.GetAxis("Horizontal") * speed * Vector3.right);
 
 		if ((Input.GetKeyDown ("space"))&&(canJump == true))
@@ -39,11 +40,11 @@ public class Control : MonoBehaviour {
 			p1.x -= 4.0f;
 			p1.y += 1.0f;
 			transform.position = p1;
-			transform.rotation = r0;
+			//transform.rotation = r0;
 		}
 		if (col.gameObject.name == "Void") {
 			transform.position = p0;
-			transform.rotation = r0;
+			//transform.rotation = r0;
 		}
 		if (col.gameObject.name == "Piso")
 			canJump = true;
