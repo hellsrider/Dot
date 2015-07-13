@@ -3,31 +3,42 @@ using System.Collections;
 
 public class Control : MonoBehaviour {
 	Rigidbody rb;
-	public float speed = 0.2f;
-	public float jumpspeed = 100.0f;
+	public float speed = 0.25f;
+	public float jumpSpeed = 100.0f;
+	public float waitTime = 1.0f;
+	public float flicker = 1.0f;
+	private bool canMove = true;
 	private bool canJump = true;
 	Vector3 p0;
-	Quaternion r0;
 
 	// Use this for initialization
 	void Start () {
+		p0 = transform.position;
 		rb = GetComponent<Rigidbody> ();
 		rb.freezeRotation = true;
-		p0 = transform.position;
-		//r0 = transform.rotation;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		//rb.AddForce(Vector3.right * Input.GetAxis("Horizontal") * 5.0f);
-		transform.localPosition += (Input.GetAxis("Horizontal") * speed * Vector3.right);
 
 		if ((Input.GetKeyDown ("space"))&&(canJump == true))
 		{
-			//transform.Translate(Vector3.up * 260 * Time.deltaTime, Space.World);
-			rb.AddForce(Vector3.up * jumpspeed);
-			//canJump = false;
+			rb.AddForce(Vector3.up * jumpSpeed);
 		}
+
+		Color color = gameObject.GetComponent<Renderer> ().material.color;
+		if (!canMove) {
+			color.a = (Mathf.Abs(Mathf.Sin(Time.fixedTime * flicker)) * 0.5f) + 0.5f;
+		} else {
+			color.a = 1.0f;
+		}
+		gameObject.GetComponent<Renderer> ().material.color = color;
+	}
+
+	void FixedUpdate () {
+		if(canMove)
+			transform.localPosition += (Input.GetAxis("Horizontal") * speed * Vector3.right);
 	}
 
 	void OnCollisionEnter(Collision col)
@@ -40,11 +51,13 @@ public class Control : MonoBehaviour {
 			p1.x -= 4.0f;
 			p1.y += 1.0f;
 			transform.position = p1;
-			//transform.rotation = r0;
+			canMove = false;
+			StartCoroutine(delay());
 		}
 		if (col.gameObject.name == "Void") {
 			transform.position = p0;
-			//transform.rotation = r0;
+			canMove = false;
+			StartCoroutine(delay());
 		}
 		if (col.gameObject.name == "Piso")
 			canJump = true;
@@ -54,5 +67,10 @@ public class Control : MonoBehaviour {
 	{
 		if (col.gameObject.name == "Piso")
 			canJump = false;
+	}
+
+	IEnumerator delay() {
+		yield return new WaitForSeconds(waitTime);
+		canMove = true;
 	}
 }

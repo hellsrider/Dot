@@ -4,12 +4,12 @@ using System.Collections;
 public class CameraFollow : MonoBehaviour {
 	
 	public enum CameraModes{Smooth, Linear};
-	public CameraModes CameraMode;
-	public Transform Character;
-	public Vector3 CameraOffset;
-	public float LinearSpeed = 10.0f;
-	public float SmoothTime = 0.25f;
-	public float BootDelay = 1.0f;
+	public CameraModes cameraMode;
+	public Transform character;
+	public Vector3 cameraOffset;
+	public float linearSpeed = 10.0f;
+	public float smoothTime = 0.25f;
+	public float bootDelay = 1.0f;
 	private Vector3 velocity = Vector3.zero;
 	private bool boot = false;
 
@@ -23,20 +23,20 @@ public class CameraFollow : MonoBehaviour {
 		StartCoroutine (BootWait ());
 		if (!boot)
 			return;
-		Vector3 target = Character.position + CameraOffset;
-		switch (CameraMode) {
+		Vector3 target = character.position + cameraOffset;
+		switch (cameraMode) {
 		case CameraModes.Linear:
-			float step = LinearSpeed * Time.deltaTime;
+			float step = linearSpeed * Time.deltaTime;
 			transform.position = Vector3.MoveTowards(transform.position, target, step);
 			break;
 		case CameraModes.Smooth:
-			transform.position = Vector3.SmoothDamp (transform.position, target, ref velocity, SmoothTime);
+			transform.position = Vector3.SmoothDamp (transform.position, target, ref velocity, smoothTime);
 			break;
 		}
 	}
 
 	IEnumerator BootWait() {
-		yield return new WaitForSeconds(BootDelay);
+		yield return new WaitForSeconds(bootDelay);
 		boot = true;
 	}
 }
